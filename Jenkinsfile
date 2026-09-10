@@ -11,6 +11,7 @@ pipeline {
                 stage('Unit tests') {
                     steps {
                         dir('shopping-cart-v2') {
+                            sh 'chmod +x mvnw'
                             sh './mvnw test -D testGroups=unit'
                         }
                     }
@@ -22,7 +23,24 @@ pipeline {
                     }
                     steps {
                         dir('shopping-cart-v2') {
+                            sh 'chmod +x mvnw'
                             sh './mvnw test -D testGroups=integration'
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('Build') {
+            steps {
+                script {
+                    dir('shopping-cart-v2') {
+                        try {
+                            sh 'chmod +x mvnw'
+                            sh './mvnw package -D skipTests'
+                        } catch (ex) {
+                            echo "Error while generating JAR file"
+                            throw ex
                         }
                     }
                 }
